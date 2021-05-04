@@ -1,29 +1,42 @@
 <template>
-    <div>
-        <h3>Todos</h3>
-        <div class="todos">
-            <div v-for="todo in allTodos" :key="todo.id" class="todo">
-                {{ todo.title }}
-            </div>
-        </div>
+  <div>
+    <h3>Todos</h3>
+    <div class="legend">
+      <span>Double click to mark as complete</span>
+      <span> <span class="incomplete-box"></span> = Incomplete </span>
+      <span> <span class="complete-box"></span> = Complete </span>
     </div>
+    <div class="todos">
+      <div v-bind:class="{'is-complete': todo.completed}" @dblclick="onDblClick(todo)" v-for="todo in allTodos" :key="todo.id" class="todo">
+        {{ todo.title }}
+        <i @click="deleteTodo(todo.id)" class="fas fa-trash-alt"></i>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
-    name: "Todos",
-    computed: mapGetters(['allTodos']),
-    methods: {
-        ...mapActions(['fetchTodos'])
-    },
-    created() {
-        this.fetchTodos();
-    }
-}
+  name: 'Todos',
+  computed: mapGetters(['allTodos']),
+  methods: {
+    ...mapActions(['fetchTodos', 'deleteTodo', 'updateTodo']),
 
+    onDblClick(todo) {
+      const t = {
+        id: todo.id,
+        title: todo.title,
+        completed: !todo.completed
+      }
+      this.updateTodo(t)
+    },
+  },
+  created() {
+    this.fetchTodos();
+  },
+};
 </script>
 
 <style scoped>
