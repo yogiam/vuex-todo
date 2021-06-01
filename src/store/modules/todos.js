@@ -1,4 +1,4 @@
-import axios from 'axios'
+import api from '@/api/dummyStore.js'
 
 const state = {
     todos: []
@@ -10,34 +10,30 @@ const getters = {
 
 const actions = {
     async fetchTodos ({commit}) {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
+        const response = await api.fetchTodos()
         commit('SET_TODOS', response.data)
     },
 
     async addTodo( {commit}, title) {
-        const response = await axios.post('https://jsonplaceholder.typicode.com/todos', { title, completed: false})
+        const response = api.addTodo(title)
         commit('ADD_TODO', response.data)
     },
 
     async deleteTodo( {commit}, id) {
-        await axios.delete(`https://jsonplaceholder.typicode.com/todos/{id}`)
+        await api.deleteTodo(id)
         commit('DELETE_TODO', id)
     },
 
     async filterTodos( { commit }, event) {
-        //console.log(event)
         const limit = parseInt(event.target.value)
         console.log(limit)
-        const response = await axios.get(`https://jsonplaceholder.typicode.com/todos?_limit=${limit}`)        
+        const response = await api.fetchWithLimit(limit)        
         console.log(response.data)
         commit('SET_TODOS', response.data)
-        // commit('FILTER_TODOS', response.data)
     },
 
     async updateTodo({ commit }, todo) {
-        const response = await axios
-        .put(`https://jsonplaceholder.typicode.com/todos/${todo.id}`, todo)        
-
+        const response = await api.updateTodo(todo)
         commit('UPDATE_TODO', response.data)
         console.log(response.data)
     },
