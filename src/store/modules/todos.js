@@ -1,4 +1,5 @@
 import api from '@/api/dummyStore.js'
+import fsapi from '@/api/firestore.js'
 
 const state = {
     todos: []
@@ -9,33 +10,35 @@ const getters = {
 }
 
 const actions = {
-    async fetchTodos ({commit}) {
-        const response = await api.fetchTodos()
-        commit('SET_TODOS', response.data)
+    async fetchTodos({ commit }) {
+        const todos = await fsapi.fetchTodos(-1)
+        commit('SET_TODOS', todos)
     },
 
-    async addTodo( {commit}, title) {
-        const response = api.addTodo(title)
-        commit('ADD_TODO', response.data)
+    async addTodo({ commit }, title) {
+        const todo = await fsapi.addTodo(title)
+        commit('ADD_TODO', todo)
     },
 
-    async deleteTodo( {commit}, id) {
-        await api.deleteTodo(id)
+    async deleteTodo({ commit }, id) {
+        console.log('deleting todo with id:', id)
+       const response =  await fsapi.deleteTodo(id)
+       console.log(response)
         commit('DELETE_TODO', id)
     },
 
-    async filterTodos( { commit }, event) {
+    async filterTodos({ commit }, event) {
         const limit = parseInt(event.target.value)
         console.log(limit)
-        const response = await api.fetchWithLimit(limit)        
-        console.log(response.data)
-        commit('SET_TODOS', response.data)
+        const todos = await fsapi.fetchTodos(limit)
+        console.log(todos)
+        commit('SET_TODOS', todos)
     },
 
     async updateTodo({ commit }, todo) {
-        const response = await api.updateTodo(todo)
-        commit('UPDATE_TODO', response.data)
-        console.log(response.data)
+        const response = await fsapi.updateTodo(todo)
+        console.log(response)
+        commit('UPDATE_TODO', todo)
     },
 }
 
@@ -45,7 +48,7 @@ const mutations = {
     DELETE_TODO: (state, id) => (state.todos = state.todos.filter(todo => todo.id !== id)),
     UPDATE_TODO: (state, todo) => {
         const index = state.todos.findIndex(t => t.id === todo.id)
-        if( index !== -1) {
+        if (index !== -1) {
             state.todos.splice(index, 1, todo)
         }
     }
