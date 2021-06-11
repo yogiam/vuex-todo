@@ -41,7 +41,6 @@ export default {
     },
 
     async updateTodo(todo) {
-        todo.timestamp = new Date().getTime()
         const response = await db.collection('todos').doc(todo.id).update(todo)
         return response;
     }
