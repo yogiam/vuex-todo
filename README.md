@@ -1,4 +1,5 @@
 # vuex-todo
+A simple todo app
 
 ## Project setup
 ```
